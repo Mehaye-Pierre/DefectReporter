@@ -1,10 +1,12 @@
 package com.seawolf.defectreporter;
 
+import java.io.Serializable;
+
 /**
  * Created by Seawolf on 28/05/2018.
  */
 
-public class Site {
+public class Site implements Serializable{
 
     private int ID;
     private String name;

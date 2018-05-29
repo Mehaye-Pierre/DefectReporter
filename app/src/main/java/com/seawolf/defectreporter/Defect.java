@@ -1,12 +1,13 @@
 package com.seawolf.defectreporter;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Seawolf on 28/05/2018.
  */
 
-public class Defect {
+public class Defect implements Serializable{
 
     private int ID;
 
