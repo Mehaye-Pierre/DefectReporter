@@ -1,5 +1,8 @@
 package com.seawolf.defectreporter;
 
+import android.os.Parcel;
+
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -18,11 +21,9 @@ public class Defect implements Serializable{
     private String description;
     private Date date;
 
-    public Defect(int ID, String name, String photoPath, String description, Date date) {
+    public Defect(int ID, String name, Date date) {
         this.ID = ID;
         this.name = name;
-        this.photoPath = photoPath;
-        this.description = description;
         this.date = date;
     }
 
@@ -65,4 +66,5 @@ public class Defect implements Serializable{
     public void setDate(Date date) {
         this.date = date;
     }
+
 }
