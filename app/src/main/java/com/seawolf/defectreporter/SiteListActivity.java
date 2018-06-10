@@ -79,19 +79,74 @@ public class SiteListActivity extends AppCompatActivity{
         LinearLayout listLayout = findViewById(R.id.layoutListDisplay);
         listLayout.removeAllViews();
         for (Site site : siteList){
+            LinearLayout layout = new LinearLayout(this);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+            layout.setOrientation(LinearLayout.HORIZONTAL);
+            layout.setLayoutParams(params);
             final Site tmpSite = site;
-            Button tmpButton = new Button(this);
-            tmpButton.setText(site.getName());
-            tmpButton.setOnClickListener(new View.OnClickListener() {
+            Button buttonNavigate = new Button(this);
+            buttonNavigate.setText(site.getName());
+            buttonNavigate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     goToSiteActivity(tmpSite);
                 }
             });
-            listLayout.addView(tmpButton);
+            Button buttonDelete = new Button(this);
+            buttonDelete.setText("X");
+            buttonDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogDeleteConfirm(tmpSite);
+                }
+            });
+            layout.addView(buttonNavigate);
+            layout.addView(buttonDelete);
+            listLayout.addView(layout);
         }
 
+    }
 
+    private void deleteSite(Site site){
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
+        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+        Gson gson = new Gson();
+        String json = appSharedPrefs.getString(site.getName(), "");
+        List<Defect> defectList;
+        if (json.isEmpty()) {
+            defectList = new ArrayList<Defect>();
+        } else {
+            Type type = new TypeToken<List<Defect>>() {
+            }.getType();
+            defectList = gson.fromJson(json, type);
+        }
+        for(Defect defect:defectList){
+            defect.deletePhoto();
+            prefsEditor.remove(defect.getName());
+        }
+        prefsEditor.commit();
+        siteList.remove(site);
+        saveList();
+        displayList();
+    }
+
+
+
+    private void dialogDeleteConfirm(final Site site) {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Attention")
+                .setMessage("Supprimer le défaut "+site.getName()+" ?")
+                .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteSite(site);
+                    }
+
+                })
+                .setNegativeButton("Non", null)
+                .show();
     }
 
     private void popDialogSite(){
@@ -115,7 +170,7 @@ public class SiteListActivity extends AppCompatActivity{
         final EditText et = new EditText(this);
         String etStr = et.getText().toString();
         TextView tv1 = new TextView(this);
-        tv1.setText("Input Student ID");
+        tv1.setText("Nom du chantier");
 
         LinearLayout.LayoutParams tv1Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         tv1Params.bottomMargin = 5;

@@ -3,6 +3,7 @@ package com.seawolf.defectreporter;
 import android.os.Parcel;
 
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -49,6 +50,13 @@ public class Defect implements Serializable{
 
     public void setPhotoPath(String photoPath) {
         this.photoPath = photoPath;
+    }
+
+    public void deletePhoto(){
+        if(this.photoPath != null){
+            File file = new File(photoPath);
+            file.delete();
+        }
     }
 
     public String getDescription() {

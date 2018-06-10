@@ -8,11 +8,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.View;
@@ -22,20 +24,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * TODO : Add/edit the name
- * TODO : Take a (new) picture
- * TODO : Add/edit a comment
  */
 
 public class DefectActivity extends Activity {
 
     Defect defect;
+    String siteName;
+    boolean fullscreen;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +53,7 @@ public class DefectActivity extends Activity {
         Intent intent = getIntent();
         if (intent != null) {
             defect = (Defect)intent.getSerializableExtra("DEFECT");
+            siteName = intent.getStringExtra("SITENAME");
             TextView tv = findViewById(R.id.textViewDefectName);
             tv.setText(defect.getName());
         }
@@ -64,16 +73,59 @@ public class DefectActivity extends Activity {
                 popCommentDialog();
             }
         });
-        //setImage();
+        final ImageView myImage = (ImageView) findViewById(R.id.imageDefect);
+        myImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(fullscreen) {
+                    fullscreen=false;
+                    myImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 400));
+                    myImage.setAdjustViewBounds(true);
+                }else{
+                    fullscreen=true;
+                    myImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+                    myImage.setScaleType(ImageView.ScaleType.FIT_XY);
+                }
+            }
+        });
+        TextView originalComment = findViewById(R.id.textViewComment);
+        originalComment.setText(this.defect.getDescription());
+
+        setImage();
 
     }
 
+    private void saveChanges(){
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
+        Gson gson = new Gson();
+        String json = appSharedPrefs.getString(siteName, "");
+        List<Defect> defectList;
+        if (json.isEmpty()) {
+            defectList = new ArrayList<Defect>();
+        } else {
+            Type type = new TypeToken<List<Defect>>() {
+            }.getType();
+            defectList = gson.fromJson(json, type);
+        }
+        for(Defect oldDefect:defectList){
+            if(oldDefect.getName().equals(this.defect.getName())){
+                defectList.remove(oldDefect);
+            }
+        }
+        defectList.add(this.defect);
+        json = gson.toJson(defectList);
+        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
+        prefsEditor.putString(siteName, json);
+        prefsEditor.commit();
+    }
 
     private void setImage(){
         if(defect.getPhotoPath() != null){
             Bitmap myBitmap = BitmapFactory.decodeFile(defect.getPhotoPath());
             ImageView myImage = (ImageView) findViewById(R.id.imageDefect);
             myImage.setImageBitmap(myBitmap);
+            myImage.postInvalidate();
         }
 
     }
@@ -98,7 +150,18 @@ public class DefectActivity extends Activity {
                 startActivityForResult(takePictureIntent, 1);
             }
         }
-        setImage();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == 1) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                saveChanges();
+                setImage();
+            }
+        }
     }
 
     private File createImageFile() throws IOException {
@@ -163,7 +226,10 @@ public class DefectActivity extends Activity {
         // Setting Positive "OK" Button
         alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                originalComment.setText(et.getText().toString());
+                defect.setDescription(et.getText().toString());
+                originalComment.setText(defect.getDescription());
+
+                saveChanges();
             }
         });
 

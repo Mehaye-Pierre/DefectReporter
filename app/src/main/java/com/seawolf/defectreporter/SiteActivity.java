@@ -27,8 +27,6 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * TODO : List of the defects, leads to the defects activity
- * TODO : Add a new defect
  * TODO : Edit a defect
  * TODO : Remove a defect
  */
@@ -91,20 +89,58 @@ public class SiteActivity extends Activity {
         LinearLayout listLayout = findViewById(R.id.layoutListDisplay);
         listLayout.removeAllViews();
         for (Defect defect : defectList){
+            LinearLayout layout = new LinearLayout(this);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+            layout.setOrientation(LinearLayout.HORIZONTAL);
+            layout.setLayoutParams(params);
             final Defect tmpDefect = defect;
-            Button tmpButton = new Button(this);
-            tmpButton.setText(defect.getName());
-            tmpButton.setOnClickListener(new View.OnClickListener() {
+            Button buttonNavigate = new Button(this);
+            buttonNavigate.setText(defect.getName());
+            buttonNavigate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     goToDefectActivity(tmpDefect);
                 }
             });
-            listLayout.addView(tmpButton);
+            Button buttonDelete = new Button(this);
+            buttonDelete.setText("X");
+            buttonDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogDeleteConfirm(tmpDefect);
+                }
+            });
+            layout.addView(buttonNavigate);
+            layout.addView(buttonDelete);
+            listLayout.addView(layout);
         }
 
 
     }
+
+    private void deleteDefect(Defect defect){
+        defect.deletePhoto();
+        defectList.remove(defect);
+        saveList();
+        displayList();
+    }
+
+    private void dialogDeleteConfirm(final Defect defect) {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Attention")
+                .setMessage("Supprimer le défaut "+defect.getName()+" ?")
+                .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteDefect(defect);
+                    }
+
+                })
+                .setNegativeButton("Non", null)
+                .show();
+    }
+
 
     private void popDialogDefect(){
         //called by our button
@@ -172,6 +208,7 @@ public class SiteActivity extends Activity {
     private void goToDefectActivity(Defect defect){
         Intent intent = new Intent(this,DefectActivity.class);
         intent.putExtra("DEFECT", defect);
+        intent.putExtra("SITENAME",site.getName());
         startActivity(intent);
     }
 }
