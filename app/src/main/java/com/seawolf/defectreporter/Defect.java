@@ -15,12 +15,17 @@ public class Defect implements Serializable{
     private int ID;
 
 
-
     private String name;
     private String photoPath;
     private String description;
     private Date date;
 
+    /**
+     * creates a defect object
+     * @param ID is the unique ID for each created defect
+     * @param name is the name of the defect
+     * @param date is the date when the defect was created
+     */
     public Defect(int ID, String name, Date date) {
         this.ID = ID;
         this.name = name;

@@ -64,8 +64,7 @@ public class SiteActivity extends Activity {
 
     private void saveList(){
         //and since no one can remember android synthax
-        SharedPreferences appSharedPrefs = PreferenceManager
-                .getDefaultSharedPreferences(this.getApplicationContext());
+        SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
         Gson gson = new Gson();
         String json = gson.toJson(defectList);
@@ -74,8 +73,7 @@ public class SiteActivity extends Activity {
     }
 
     private void loadList(){
-        SharedPreferences appSharedPrefs = PreferenceManager
-                .getDefaultSharedPreferences(this.getApplicationContext());
+        SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
         Gson gson = new Gson();
         String json = appSharedPrefs.getString(site.getName(), "");
         if (json.isEmpty()) {

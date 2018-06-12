@@ -41,14 +41,18 @@ public class DefectActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_defect);
-
         Intent intent = getIntent();
         if (intent != null) {
             defect = (Defect)intent.getSerializableExtra("DEFECT");
             TextView tv = findViewById(R.id.textViewDefectName);
+            // sets the tv text to the name of the defect
             tv.setText(defect.getName());
         }
 
+        /**
+         * creates a button to go into the photo app
+         * on click the takeAndSavePicture method is called
+         */
         Button addImgButton = findViewById(R.id.buttonAddImage);
         addImgButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +61,10 @@ public class DefectActivity extends Activity {
             }
         });
 
+        /**
+         * creates a button to modify a comment
+         * on click a pop up dialog will appear where the comment can be modified
+         */
         Button modifyCommentButton = findViewById(R.id.buttonDefectComment);
         modifyCommentButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -68,7 +76,10 @@ public class DefectActivity extends Activity {
 
     }
 
-
+    /**
+     * sets an imgage to a defect if the photo path is not null
+     * an existing photo is added to a defect
+     */
     private void setImage(){
         if(defect.getPhotoPath() != null){
             Bitmap myBitmap = BitmapFactory.decodeFile(defect.getPhotoPath());
@@ -78,6 +89,11 @@ public class DefectActivity extends Activity {
 
     }
 
+    /**
+     * method to take and save a picture
+     * rest idk
+     * calls the set Image method, because the Image should be displayed after it was taken?
+     */
     private void takeAndSavePicture(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -92,8 +108,7 @@ public class DefectActivity extends Activity {
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 Uri photoURI = FileProviderCustom.getUriForFile(this,
-                        this.getApplicationContext().getPackageName() + ".my.package.name.provider",
-                        photoFile);
+                        this.getApplicationContext().getPackageName() + ".my.package.name.provider", photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, 1);
             }
@@ -101,6 +116,14 @@ public class DefectActivity extends Activity {
         setImage();
     }
 
+    /**
+     * creates a file that gets a time stamp
+     * gets the .jpg
+     * sets the photo path of the defect object
+     * @return the image?
+     * rest idk
+     * @throws IOException
+     */
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -117,6 +140,9 @@ public class DefectActivity extends Activity {
         return image;
     }
 
+    /**
+     * creates the pop up dialog to add a comment
+     */
     private void popCommentDialog(){
         //called by our button
         //this will be a "popup" showing when the user presses the button, where the user will write the data
@@ -139,7 +165,6 @@ public class DefectActivity extends Activity {
 
         final EditText et = new EditText(this);
         et.setText(originalComment.getText().toString());
-        String etStr = et.getText().toString();
         TextView tv1 = new TextView(this);
         tv1.setText("Nom du défaut");
 

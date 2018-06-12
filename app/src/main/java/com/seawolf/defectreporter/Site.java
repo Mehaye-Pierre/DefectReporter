@@ -11,6 +11,12 @@ public class Site implements Serializable{
     private int ID;
     private String name;
 
+    /**
+     * constructor for a Site
+     * is used to create a new Site object
+     * @param ID is given to the Site to identify it
+     * @param name is the name of the Site
+     */
     public Site(int ID, String name) {
         this.ID = ID;
         this.name = name;
