@@ -100,6 +100,7 @@ public class SiteListActivity extends AppCompatActivity{
                     goToSiteActivity(tmpSite);
                 }
             });
+            // Adds a delete button next
             Button buttonDelete = new Button(this);
             buttonDelete.setText("X");
             buttonDelete.setOnClickListener(new View.OnClickListener() {
@@ -178,12 +179,12 @@ public class SiteListActivity extends AppCompatActivity{
 
         final EditText et = new EditText(this);
         TextView tv1 = new TextView(this);
-<<<<<<< HEAD
+
         //TODO translate to french!
         tv1.setText("Input Site Name");
-=======
+
         tv1.setText("Nom du chantier");
->>>>>>> 3468a3fa46322bb33b25dda5515894791ee06d52
+
 
         LinearLayout.LayoutParams tv1Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         tv1Params.bottomMargin = 5;

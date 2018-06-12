@@ -85,6 +85,7 @@ public class DefectActivity extends Activity {
         myImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO: Add the parameter for the image to be centered!
                 if(fullscreen) {
                     fullscreen=false;
                     myImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 400));
@@ -103,12 +104,12 @@ public class DefectActivity extends Activity {
 
     }
 
-<<<<<<< HEAD
+
     /**
      * sets an imgage to a defect if the photo path is not null
      * an existing photo is added to a defect
      */
-=======
+
     private void saveChanges(){
         SharedPreferences appSharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this.getApplicationContext());
@@ -134,7 +135,7 @@ public class DefectActivity extends Activity {
         prefsEditor.commit();
     }
 
->>>>>>> 3468a3fa46322bb33b25dda5515894791ee06d52
+
     private void setImage(){
         if(defect.getPhotoPath() != null){
             Bitmap myBitmap = BitmapFactory.decodeFile(defect.getPhotoPath());

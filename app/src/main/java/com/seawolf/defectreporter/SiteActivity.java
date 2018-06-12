@@ -159,7 +159,6 @@ public class SiteActivity extends Activity {
         tv.setTextSize(20);
 
         final EditText et = new EditText(this);
-        String etStr = et.getText().toString();
         TextView tv1 = new TextView(this);
         tv1.setText("Nom du défaut");
 
