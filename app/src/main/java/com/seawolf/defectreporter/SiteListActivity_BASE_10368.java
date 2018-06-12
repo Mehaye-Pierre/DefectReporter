@@ -38,13 +38,9 @@ public class SiteListActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // load the activity_site_list xml
         setContentView(R.layout.activity_site_list);
-        // call the loadList method when the app starts
         loadList();
-        // call the displayList method when the app starts
         displayList();
-        // gets the buttonAddNewSite element from the xml
         Button writeExcelButton = findViewById(R.id.buttonAddNewSite);
         writeExcelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,27 +52,23 @@ public class SiteListActivity extends AppCompatActivity{
 
     private void saveList(){
         //and since no one can remember android synthax
-        //GitHub account
-        SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-        //GitHub repository
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
         SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
         Gson gson = new Gson();
-        // turns the siteList into a Json?
         String json = gson.toJson(siteList);
-        //string is added, like on git(add)
         prefsEditor.putString("JsonList", json);
-        // commit
         prefsEditor.commit();
     }
 
     private void loadList(){
-        SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
         Gson gson = new Gson();
         String json = appSharedPrefs.getString("JsonList", "");
         if (json.isEmpty()) {
             siteList = new ArrayList<Site>();
         } else {
-            // since List<Site>> is not native, a TypeToken is used
             Type type = new TypeToken<List<Site>>() {
             }.getType();
             siteList = gson.fromJson(json, type);
@@ -87,74 +79,19 @@ public class SiteListActivity extends AppCompatActivity{
         LinearLayout listLayout = findViewById(R.id.layoutListDisplay);
         listLayout.removeAllViews();
         for (Site site : siteList){
-            LinearLayout layout = new LinearLayout(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-            layout.setOrientation(LinearLayout.HORIZONTAL);
-            layout.setLayoutParams(params);
             final Site tmpSite = site;
-            Button buttonNavigate = new Button(this);
-            buttonNavigate.setText(site.getName());
-            buttonNavigate.setOnClickListener(new View.OnClickListener() {
+            Button tmpButton = new Button(this);
+            tmpButton.setText(site.getName());
+            tmpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     goToSiteActivity(tmpSite);
                 }
             });
-            Button buttonDelete = new Button(this);
-            buttonDelete.setText("X");
-            buttonDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialogDeleteConfirm(tmpSite);
-                }
-            });
-            layout.addView(buttonNavigate);
-            layout.addView(buttonDelete);
-            listLayout.addView(layout);
+            listLayout.addView(tmpButton);
         }
 
-    }
 
-    private void deleteSite(Site site){
-        SharedPreferences appSharedPrefs = PreferenceManager
-                .getDefaultSharedPreferences(this.getApplicationContext());
-        SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
-        Gson gson = new Gson();
-        String json = appSharedPrefs.getString(site.getName(), "");
-        List<Defect> defectList;
-        if (json.isEmpty()) {
-            defectList = new ArrayList<Defect>();
-        } else {
-            Type type = new TypeToken<List<Defect>>() {
-            }.getType();
-            defectList = gson.fromJson(json, type);
-        }
-        for(Defect defect:defectList){
-            defect.deletePhoto();
-            prefsEditor.remove(defect.getName());
-        }
-        prefsEditor.commit();
-        siteList.remove(site);
-        saveList();
-        displayList();
-    }
-
-
-
-    private void dialogDeleteConfirm(final Site site) {
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Attention")
-                .setMessage("Supprimer le défaut "+site.getName()+" ?")
-                .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteSite(site);
-                    }
-
-                })
-                .setNegativeButton("Non", null)
-                .show();
     }
 
     private void popDialogSite(){
@@ -170,20 +107,15 @@ public class SiteListActivity extends AppCompatActivity{
         layout.setPadding(2, 2, 2, 2);
 
         TextView tv = new TextView(this);
-        // Text = add a new site
         tv.setText("Ajouter un nouveau chantier");
         tv.setPadding(40, 40, 40, 40);
         tv.setGravity(Gravity.CENTER);
         tv.setTextSize(20);
 
         final EditText et = new EditText(this);
+        String etStr = et.getText().toString();
         TextView tv1 = new TextView(this);
-<<<<<<< HEAD
-        //TODO translate to french!
-        tv1.setText("Input Site Name");
-=======
-        tv1.setText("Nom du chantier");
->>>>>>> 3468a3fa46322bb33b25dda5515894791ee06d52
+        tv1.setText("Input Student ID");
 
         LinearLayout.LayoutParams tv1Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         tv1Params.bottomMargin = 5;

@@ -38,13 +38,9 @@ public class SiteListActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // load the activity_site_list xml
         setContentView(R.layout.activity_site_list);
-        // call the loadList method when the app starts
         loadList();
-        // call the displayList method when the app starts
         displayList();
-        // gets the buttonAddNewSite element from the xml
         Button writeExcelButton = findViewById(R.id.buttonAddNewSite);
         writeExcelButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,27 +52,23 @@ public class SiteListActivity extends AppCompatActivity{
 
     private void saveList(){
         //and since no one can remember android synthax
-        //GitHub account
-        SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
-        //GitHub repository
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
         SharedPreferences.Editor prefsEditor = appSharedPrefs.edit();
         Gson gson = new Gson();
-        // turns the siteList into a Json?
         String json = gson.toJson(siteList);
-        //string is added, like on git(add)
         prefsEditor.putString("JsonList", json);
-        // commit
         prefsEditor.commit();
     }
 
     private void loadList(){
-        SharedPreferences appSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
+        SharedPreferences appSharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this.getApplicationContext());
         Gson gson = new Gson();
         String json = appSharedPrefs.getString("JsonList", "");
         if (json.isEmpty()) {
             siteList = new ArrayList<Site>();
         } else {
-            // since List<Site>> is not native, a TypeToken is used
             Type type = new TypeToken<List<Site>>() {
             }.getType();
             siteList = gson.fromJson(json, type);
@@ -170,20 +162,15 @@ public class SiteListActivity extends AppCompatActivity{
         layout.setPadding(2, 2, 2, 2);
 
         TextView tv = new TextView(this);
-        // Text = add a new site
         tv.setText("Ajouter un nouveau chantier");
         tv.setPadding(40, 40, 40, 40);
         tv.setGravity(Gravity.CENTER);
         tv.setTextSize(20);
 
         final EditText et = new EditText(this);
+        String etStr = et.getText().toString();
         TextView tv1 = new TextView(this);
-<<<<<<< HEAD
-        //TODO translate to french!
-        tv1.setText("Input Site Name");
-=======
         tv1.setText("Nom du chantier");
->>>>>>> 3468a3fa46322bb33b25dda5515894791ee06d52
 
         LinearLayout.LayoutParams tv1Params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         tv1Params.bottomMargin = 5;
