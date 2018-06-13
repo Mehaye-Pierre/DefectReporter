@@ -24,6 +24,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.crlandroidpdfwriter.PDFWriter;
+import com.example.crlandroidpdfwriter.PaperSize;
+import com.example.crlandroidpdfwriter.StandardFonts;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -44,6 +47,8 @@ public class DefectActivity extends Activity {
     Defect defect;
     String siteName;
     boolean fullscreen;
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +74,7 @@ public class DefectActivity extends Activity {
                 takeAndSavePicture();
             }
         });
+
 
         /**
          * creates a button to modify a comment

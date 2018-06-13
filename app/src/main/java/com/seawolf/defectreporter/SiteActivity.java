@@ -9,18 +9,32 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.crlandroidpdfwriter.PDFWriter;
+import com.example.crlandroidpdfwriter.PaperSize;
+import com.example.crlandroidpdfwriter.StandardFonts;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,6 +72,70 @@ public class SiteActivity extends Activity {
             }
         });
 
+
+
+       Button createPdfButton = findViewById(R.id.createPdfBtn);
+        createPdfButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                generatePDF();
+                sendMail();
+            }
+        });
+
+    }
+
+
+    private void generatePDF(){
+        PDFWriter pdfWriter = new PDFWriter(PaperSize.FOLIO_WIDTH, PaperSize.FOLIO_HEIGHT);
+        pdfWriter.setFont(StandardFonts.SUBTYPE, StandardFonts.TIMES_BOLD);
+        for(Defect defect: defectList){
+        pdfWriter.addText(500, 450,15, defect.getDescription());
+        if(defect.getPhotoPath() != null){
+        Bitmap defectError =  BitmapFactory.decodeFile(defect.getPhotoPath());
+        pdfWriter.addImage(10, PaperSize.FOLIO_HEIGHT - 720, defectError);
+        }
+        //TODO only create a new Page if there are more entries to go
+        pdfWriter.newPage();
+        }
+        outputToFile("TestPDFReport", pdfWriter.asString(), "ISO-8859-1");
+    }
+    public void outputToFile(String fileName, String pdfContent, String encoding) {
+        File newFile = new File(getExternalFilesDir(null), fileName +".pdf");
+
+        try {
+            newFile.createNewFile();
+            try {
+                FileOutputStream pdfFile = new FileOutputStream(newFile);
+                pdfFile.write(pdfContent.getBytes(encoding));
+                pdfFile.close();
+                System.out.println("PDF JEAH!");
+            } catch(FileNotFoundException e) {
+               e.printStackTrace();
+            }
+
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    private void sendMail() {
+        File filelocation = new File(getExternalFilesDir(null), "TestPDFReport.pdf");
+        Uri path = FileProviderCustom.getUriForFile(this,this.getApplicationContext().getPackageName() + ".my.package.name.provider",filelocation);
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        i.setType("vnd.android.cursor.dir/email");
+        i.putExtra(Intent.EXTRA_EMAIL, new String[]{});
+        i.putExtra(Intent.EXTRA_SUBJECT, "Empty");
+        i.putExtra(Intent.EXTRA_STREAM, path);
+        Log.v(getClass().getSimpleName(),path.getPath());
+        try {
+            startActivity(Intent.createChooser(i, "Envoi du mail ..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(this, "Pas de client mail installé.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void saveList(){
@@ -122,6 +200,12 @@ public class SiteActivity extends Activity {
         saveList();
         displayList();
     }
+
+
+
+
+
+
 
     private void dialogDeleteConfirm(final Defect defect) {
         new AlertDialog.Builder(this)

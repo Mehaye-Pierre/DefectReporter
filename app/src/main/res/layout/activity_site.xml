@@ -23,6 +23,12 @@
             android:layout_height="wrap_content"
             android:text="Nouveau défaut" />
 
+        <Button
+            android:id="@+id/createPdfBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PDF" />
+
         <LinearLayout
             android:id="@+id/layoutListDisplay"
             android:layout_width="match_parent"
