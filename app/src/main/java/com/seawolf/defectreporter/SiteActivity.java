@@ -85,18 +85,24 @@ public class SiteActivity extends Activity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadList();
+        displayList();
+    }
 
     private void generatePDF(){
         PDFWriter pdfWriter = new PDFWriter(PaperSize.FOLIO_WIDTH, PaperSize.FOLIO_HEIGHT);
         pdfWriter.setFont(StandardFonts.SUBTYPE, StandardFonts.TIMES_BOLD);
         for(Defect defect: defectList){
-        pdfWriter.addText(500, 450,15, defect.getDescription());
-        if(defect.getPhotoPath() != null){
-        Bitmap defectError =  BitmapFactory.decodeFile(defect.getPhotoPath());
-        pdfWriter.addImage(10, PaperSize.FOLIO_HEIGHT - 720, defectError);
-        }
-        //TODO only create a new Page if there are more entries to go
-        pdfWriter.newPage();
+            pdfWriter.addText(500, 450,15, defect.getDescription());
+            if(defect.getPhotoPath() != null){
+                Bitmap defectError =  getResizedBitmap(BitmapFactory.decodeFile(defect.getPhotoPath()),400);
+                pdfWriter.addImage(10, PaperSize.FOLIO_HEIGHT - 720, defectError);
+                }
+            //TODO only create a new Page if there are more entries to go
+            pdfWriter.newPage();
         }
         outputToFile("TestPDFReport", pdfWriter.asString(), "ISO-8859-1");
     }
@@ -291,5 +297,21 @@ public class SiteActivity extends Activity {
         intent.putExtra("DEFECT", defect);
         intent.putExtra("SITENAME",site.getName());
         startActivity(intent);
+    }
+
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 }
