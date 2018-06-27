@@ -61,6 +61,7 @@ public class DefectActivity extends Activity {
             TextView tv = findViewById(R.id.textViewDefectName);
             // sets the tv text to the name of the defect
             tv.setText(defect.getName());
+
         }
 
         /**
@@ -172,6 +173,7 @@ public class DefectActivity extends Activity {
             if (photoFile != null) {
                 Uri photoURI = FileProviderCustom.getUriForFile(this,
                         this.getApplicationContext().getPackageName() + ".my.package.name.provider", photoFile);
+                takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, 1);
             }

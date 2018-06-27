@@ -19,12 +19,14 @@
 
         <Button
             android:id="@+id/buttonAddNewDefect"
+            style="@android:style/Widget.Holo.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Nouveau défaut" />
 
         <Button
             android:id="@+id/createPdfBtn"
+            style="@android:style/Widget.Holo.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="PDF" />

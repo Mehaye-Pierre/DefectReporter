@@ -30,6 +30,7 @@
 
         <Button
             android:id="@+id/buttonAddImage"
+            style="@android:style/Widget.Holo.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Prendre une photo" />
@@ -42,6 +43,7 @@
 
         <Button
             android:id="@+id/buttonDefectComment"
+            style="@android:style/Widget.Holo.Button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Modifier le commentaire" />
